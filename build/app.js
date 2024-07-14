@@ -17,6 +17,7 @@ const customError_1 = require("./interfaces/customError");
 const mongoose_1 = require("mongoose");
 const app = (0, express_1.default)();
 const dotenv_1 = require("dotenv");
+const path_1 = __importDefault(require("path"));
 (0, dotenv_1.config)();
 const fileStorage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
@@ -46,6 +47,7 @@ const filter = (req, file, cb) => {
 app.use((0, body_parser_1.urlencoded)());
 app.use((0, body_parser_1.json)());
 app.use((0, multer_1.default)({ storage: fileStorage, fileFilter: filter }).array('images', 5));
+app.use('/images', express_1.default.static(path_1.default.join(__dirname, '../images')));
 app.use(router_1.AppRouter.getInstance());
 app.use('/', (req, res, next) => {
     res.status(404).send('Page not found!');
