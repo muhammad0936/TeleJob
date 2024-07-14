@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = require("body-parser");
+const fs_1 = __importDefault(require("fs"));
 const multer_1 = __importDefault(require("multer"));
 require("./controllers/customer");
 require("./controllers/worker");
@@ -19,7 +20,12 @@ const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
 const fileStorage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'images');
+        const folderPath = 'images'; // Specify the folder name
+        // Check if the folder exists; if not, create it
+        if (!fs_1.default.existsSync(folderPath)) {
+            fs_1.default.mkdirSync(folderPath, { recursive: true });
+        }
+        cb(null, folderPath);
     },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + '-' + file.originalname);
