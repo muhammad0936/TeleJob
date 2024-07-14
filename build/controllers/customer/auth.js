@@ -86,7 +86,6 @@ let customer = class customer {
                 text: `Your reset_password token is: ${customer.resetToken}`,
             };
             const mailInfo = yield transporter.sendMail(mailOptions);
-            console.log(mailInfo.messageId);
             res.status(200).json({
                 message: 'We send a token to your email, Check it and use it to reset your password.',
             });
