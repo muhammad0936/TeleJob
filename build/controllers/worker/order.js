@@ -63,8 +63,6 @@ let worker = class worker {
             const orders = yield models_1.Order.find({ worker: req.userId })
                 .populate({ path: 'shop', select: 'name' })
                 .select('_id description status totlaPrice createdAt');
-            if (!orders[0])
-                res.status(404).json({ message: 'No orders to show!', orders });
             res.status(200).json({ message: 'Your orders: ', orders });
         });
     }

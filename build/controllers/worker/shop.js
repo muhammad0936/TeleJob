@@ -25,8 +25,6 @@ let worker = class worker {
     getShops(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const shops = yield models_1.Shop.find().select('_id name phone description address photoUrl');
-            if (!shops[0])
-                res.status(404).json({ message: 'No shops to show!', shops: [] });
             res.status(200).json({ message: 'Shops: ', shops });
         });
     }

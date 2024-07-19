@@ -30,11 +30,6 @@ let shopCategory = class shopCategory {
             //   throw error;
             // }
             const shopCategories = yield models_1.ShopCategory.find().select('_id name description');
-            if (!shopCategories[0]) {
-                res
-                    .status(404)
-                    .json({ message: 'No Shop categories to show.', shopCategories: [] });
-            }
             res.status(200).json({ message: 'Shop categories: ', shopCategories });
         });
     }

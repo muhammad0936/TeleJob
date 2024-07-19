@@ -34,10 +34,6 @@ let worker = class worker {
                 .select('_id jobDescription status')
                 .populate({ path: 'customer', select: 'name' })
                 .populate({ path: 'JobCategories', select: 'name' });
-            if (!requests[0])
-                res
-                    .status(404)
-                    .json({ message: 'No job requests to show.', requests: [] });
             res.status(200).json({ message: 'Recieved job requests: ', requests });
         });
     }

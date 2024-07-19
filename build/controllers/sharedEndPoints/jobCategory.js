@@ -31,11 +31,6 @@ let jobCategory = class jobCategory {
             //   throw error;
             // }
             const jobCategories = yield models_1.JobCategory.find().select('_id name description');
-            if (!jobCategories[0]) {
-                res
-                    .status(404)
-                    .json({ message: 'No job categories to show.', jobCategories: [] });
-            }
             res.status(200).json({ message: 'Job categories: ', jobCategories });
         });
     }

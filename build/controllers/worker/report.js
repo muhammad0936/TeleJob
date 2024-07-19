@@ -28,11 +28,6 @@ let worker = class worker {
             const reportTypes = yield models_1.ReportType.find({
                 reportedType: 'Shop',
             }).select('_id name description');
-            if (!reportTypes[0]) {
-                res
-                    .status(404)
-                    .json({ message: 'No report types to show.', reportTypes: [] });
-            }
             res.status(200).json({ message: 'Report types: ', reportTypes });
         });
     }

@@ -24,21 +24,7 @@ const models_1 = require("../../models");
 let customer = class customer {
     getWorkers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            // interface filters {
-            //   name?: string;
-            //   categories?: string[];
-            // }
-            // const allowedProperties = ['name', 'categories'];
-            // const filters = Object.keys(req.query)
-            //   .filter((key: string) => allowedProperties.includes(key))
-            //   .reduce((obj: Record<string, any>, key: string) => {
-            //     obj[key] = req.query[key];
-            //     return obj;
-            //   }, {});
             const workers = yield models_1.Worker.find().select('_id name description address');
-            if (!workers[0]) {
-                res.status(404).json({ message: 'No workers to show!', workers: [] });
-            }
             res.status(200).json({ message: 'Workers: ', workers });
         });
     }

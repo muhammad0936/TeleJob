@@ -41,14 +41,7 @@ let reportType = class reportType {
     }
     getReportTypes(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('hiiiiiiiiiiiii');
             const reportTypes = yield models_1.ReportType.find();
-            if (!reportTypes[0]) {
-                res
-                    .status(404)
-                    .json({ message: 'No report types to show!', reportTypes: [] });
-                return;
-            }
             res.status(200).json({ message: 'Report types: ', reportTypes });
         });
     }
