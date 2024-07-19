@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Worker = void 0;
 const mongoose_1 = require("mongoose");
-const { ObjectId, DocumentArray } = mongoose_1.Schema.Types;
+const { ObjectId } = mongoose_1.Schema.Types;
 const WorkerSchema = new mongoose_1.Schema({
     name: {
         type: String,
@@ -31,8 +31,7 @@ const WorkerSchema = new mongoose_1.Schema({
     },
     JobCategories: [
         {
-            type: mongoose_1.Schema.Types.ObjectId,
-            required: true,
+            type: ObjectId,
             ref: 'JobCategory',
         },
     ],

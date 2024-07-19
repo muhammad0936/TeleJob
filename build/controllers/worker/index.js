@@ -19,3 +19,4 @@ __exportStar(require("./jobRequest"), exports);
 __exportStar(require("./order"), exports);
 __exportStar(require("./shop"), exports);
 __exportStar(require("./report"), exports);
+__exportStar(require("./profile"), exports);

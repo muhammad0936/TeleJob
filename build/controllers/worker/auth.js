@@ -24,6 +24,7 @@ const catchError_1 = require("../decorators/catchError");
 const bcrypt_1 = require("bcrypt");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const models_1 = require("../../models");
+const nodemailer_1 = require("nodemailer");
 let worker = class worker {
     signup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,7 +40,13 @@ let worker = class worker {
                 JobCategories,
             });
             yield worker.save();
-            res.status(201).json({ message: 'Worker signed up successfully.' });
+            const jwt = (0, jsonwebtoken_1.sign)({
+                email: worker.email,
+                userId: worker._id,
+            }, process.env.jwt_secrete_string, { expiresIn: '30d' });
+            res
+                .status(201)
+                .json({ message: 'Worker signed up successfully.', JWT: jwt });
         });
     }
     login(req, res) {
@@ -64,6 +71,54 @@ let worker = class worker {
             res.status(200).json({ message: 'Loged in successfully.', JWT: jwt });
         });
     }
+    forgotPassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email } = req.body;
+            const worker = yield models_1.Worker.findOne({ email });
+            if (!worker)
+                throw new customError_1.CustomError('No worker found with this email!', 404);
+            let transporter = (0, nodemailer_1.createTransport)({
+                service: 'gmail',
+                auth: {
+                    user: process.env.MAIL_USERNAME,
+                    pass: process.env.MAIL_PASSWORD,
+                },
+            });
+            const resetToken = Math.floor(Math.random() * 1000000);
+            worker.resetToken = `${resetToken}`;
+            worker.resetTokenExpiration = new Date(Date.now() + 3600000);
+            yield worker.save();
+            const mailOptions = {
+                from: 'TeleJob',
+                to: email,
+                subject: 'Reset your TeleJob account password:',
+                text: `Your reset_password token is: ${worker.resetToken}`,
+            };
+            const mailInfo = yield transporter.sendMail(mailOptions);
+            res.status(200).json({
+                message: 'We send a token to your email, Check it and use it to reset your password.',
+            });
+        });
+    }
+    resetPassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, resetToken, password } = req.body;
+            const worker = yield models_1.Worker.findOne({ email });
+            if (!worker)
+                throw new customError_1.CustomError('No worker found with this email!', 404);
+            if (worker.resetToken !== resetToken)
+                throw new customError_1.CustomError('Wrong reset_password token!', 422);
+            if (worker.resetTokenExpiration &&
+                +worker.resetTokenExpiration < Date.now())
+                throw new customError_1.CustomError('Expired reset_password token!', 422);
+            const hashedPassword = yield (0, bcrypt_1.hash)(password, 12);
+            worker.password = hashedPassword;
+            worker.resetToken = null;
+            worker.resetTokenExpiration = null;
+            yield worker.save();
+            res.status(201).json({ message: 'Password updated successfully.' });
+        });
+    }
 };
 __decorate([
     catchError_1.catchError,
@@ -79,6 +134,22 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], worker.prototype, "login", null);
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.requiredProps)('email'),
+    (0, decorators_1.post)('/forgotPassword'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], worker.prototype, "forgotPassword", null);
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.requiredProps)('email', 'resetToken', 'password'),
+    (0, decorators_1.put)('/resetPassword'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], worker.prototype, "resetPassword", null);
 worker = __decorate([
     (0, decorators_1.controller)('/worker')
 ], worker);

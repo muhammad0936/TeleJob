@@ -37,7 +37,13 @@ let customer = class customer {
                 address,
             });
             yield customer.save();
-            res.status(201).json({ message: 'Customer signed up successfully.' });
+            const jwt = (0, jsonwebtoken_1.sign)({
+                email: customer.email,
+                userId: customer._id,
+            }, process.env.jwt_secrete_string, { expiresIn: '30d' });
+            res
+                .status(201)
+                .json({ message: 'Customer signed up successfully.', JWT: jwt });
         });
     }
     login(req, res) {
