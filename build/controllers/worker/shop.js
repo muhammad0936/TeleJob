@@ -48,10 +48,6 @@ let worker = class worker {
             });
             if (!shop)
                 throw new customError_1.CustomError('Shop not found!', 404);
-            if (!shop.Products[0])
-                res
-                    .status(404)
-                    .json({ message: 'No products from this shop!', products: [] });
             console.log(shop.Products);
             res
                 .status(200)

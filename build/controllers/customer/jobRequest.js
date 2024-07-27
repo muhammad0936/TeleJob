@@ -107,7 +107,7 @@ let customer = class customer {
                 });
             });
             yield request.deleteOne();
-            res.status(201).json({ message: 'Job request deleted successfully.' });
+            res.status(200).json({ message: 'Job request deleted successfully.' });
         });
     }
 };

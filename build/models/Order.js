@@ -38,5 +38,6 @@ const OrderSchema = new mongoose_1.Schema({
             quantity: Number,
         },
     ],
+    endDate: { type: mongoose_1.Schema.Types.Date, default: Date.now() + 43200000 },
 }, { timestamps: true });
 exports.Order = (0, mongoose_1.model)('Order', OrderSchema);

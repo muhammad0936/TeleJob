@@ -65,13 +65,12 @@ let worker = class worker {
             var { responseType } = req.body;
             const { requestId } = req.params;
             responseType = responseType.toLowerCase();
-            console.log(Object.keys(types_1.ResponseType));
             if (responseType !== 'accept' && responseType !== 'reject')
                 throw new customError_1.CustomError("Use valid response type, Either 'Accept' or 'Reject'.", 422);
             const worker = yield models_1.Worker.findById(req.userId);
             const jobRequest = yield models_1.JobRequest.findById(requestId);
             if (!worker || ((_a = jobRequest === null || jobRequest === void 0 ? void 0 : jobRequest.worker) === null || _a === void 0 ? void 0 : _a.toString()) !== worker._id.toString())
-                throw new customError_1.CustomError('Not authorized!', 401);
+                throw new customError_1.CustomError('Unauthorized!', 401);
             if (!jobRequest)
                 throw new customError_1.CustomError('Job request not found!', 404);
             if (jobRequest.status === types_1.JobRequestStatus.rejected)
@@ -79,7 +78,7 @@ let worker = class worker {
             if (jobRequest.status === types_1.JobRequestStatus.accepted)
                 throw new customError_1.CustomError('You already accepted this request!', 400);
             if (+jobRequest.endDate < Date.now())
-                throw new customError_1.CustomError('This job request is expired!', 410);
+                throw new customError_1.CustomError('This job request has expired!', 410);
             jobRequest.status = types_1.JobRequestStatus[`${responseType}ed`];
             jobRequest.endDate =
                 responseType === 'accept'

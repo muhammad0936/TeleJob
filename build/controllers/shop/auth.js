@@ -24,6 +24,7 @@ const catchError_1 = require("../decorators/catchError");
 const bcrypt_1 = require("bcrypt");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const models_1 = require("../../models");
+const nodemailer_1 = require("nodemailer");
 let CustomerAuthController = class CustomerAuthController {
     signup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -45,7 +46,11 @@ let CustomerAuthController = class CustomerAuthController {
                 photoUrl,
             });
             yield shop.save();
-            res.status(201).json({ message: 'Shop signed up successfully.' });
+            const jwt = (0, jsonwebtoken_1.sign)({
+                email: shop.email,
+                userId: shop._id,
+            }, process.env.jwt_secrete_string, { expiresIn: '30d' });
+            res.status(201).json({ message: 'Shop signed up successfully.', JWT: jwt });
         });
     }
     login(req, res) {
@@ -70,6 +75,53 @@ let CustomerAuthController = class CustomerAuthController {
             res.status(200).json({ message: 'Loged in successfully.', JWT: jwt });
         });
     }
+    forgotPassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email } = req.body;
+            const shop = yield models_1.Shop.findOne({ email });
+            if (!shop)
+                throw new customError_1.CustomError('No shop found with this email!', 404);
+            let transporter = (0, nodemailer_1.createTransport)({
+                service: 'gmail',
+                auth: {
+                    user: process.env.MAIL_USERNAME,
+                    pass: process.env.MAIL_PASSWORD,
+                },
+            });
+            const resetToken = Math.floor(Math.random() * 1000000);
+            shop.resetToken = `${resetToken}`;
+            shop.resetTokenExpiration = new Date(Date.now() + 3600000);
+            yield shop.save();
+            const mailOptions = {
+                from: 'TeleJob',
+                to: email,
+                subject: 'Reset your TeleJob shop_account password:',
+                text: `Your reset_password token is: ${shop.resetToken}`,
+            };
+            const mailInfo = yield transporter.sendMail(mailOptions);
+            res.status(200).json({
+                message: 'We send a token to your email, Check it and use it to reset your password.',
+            });
+        });
+    }
+    resetPassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, resetToken, password } = req.body;
+            const shop = yield models_1.Shop.findOne({ email });
+            if (!shop)
+                throw new customError_1.CustomError('No shop found with this email!', 404);
+            if (shop.resetToken !== resetToken)
+                throw new customError_1.CustomError('Wrong reset_password token!', 422);
+            if (shop.resetTokenExpiration && +shop.resetTokenExpiration < Date.now())
+                throw new customError_1.CustomError('Expired reset_password token!', 422);
+            const hashedPassword = yield (0, bcrypt_1.hash)(password, 12);
+            shop.password = hashedPassword;
+            shop.resetToken = null;
+            shop.resetTokenExpiration = null;
+            yield shop.save();
+            res.status(201).json({ message: 'Password updated successfully.' });
+        });
+    }
 };
 __decorate([
     catchError_1.catchError,
@@ -85,6 +137,22 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerAuthController.prototype, "login", null);
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.requiredProps)('email'),
+    (0, decorators_1.post)('/forgotPassword'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], CustomerAuthController.prototype, "forgotPassword", null);
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.requiredProps)('email', 'resetToken', 'password'),
+    (0, decorators_1.put)('/resetPassword'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], CustomerAuthController.prototype, "resetPassword", null);
 CustomerAuthController = __decorate([
     (0, decorators_1.controller)('/shop')
 ], CustomerAuthController);

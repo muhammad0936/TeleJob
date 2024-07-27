@@ -91,7 +91,7 @@ let worker = class worker {
             const mailOptions = {
                 from: 'TeleJob',
                 to: email,
-                subject: 'Reset your TeleJob account password:',
+                subject: 'Reset your TeleJob worker_account password:',
                 text: `Your reset_password token is: ${worker.resetToken}`,
             };
             const mailInfo = yield transporter.sendMail(mailOptions);

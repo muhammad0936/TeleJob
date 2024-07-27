@@ -24,6 +24,20 @@ const catchError_1 = require("../decorators/catchError");
 const models_1 = require("../../models");
 const isAuth_1 = require("../../middlewares/isAuth");
 let shop = class shop {
+    getProducts(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const shop = yield models_1.Shop.findById(req.userId).populate({
+                path: 'Products',
+                select: 'name description price imagesUrls',
+            });
+            if (!shop)
+                throw new customError_1.CustomError('Unauthorized!', 401);
+            console.log(shop.Products);
+            res
+                .status(200)
+                .json({ message: 'Shop products: ', products: shop.Products });
+        });
+    }
     addProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, description, price } = req.body;
@@ -45,7 +59,63 @@ let shop = class shop {
             res.status(201).json({ message: 'Product created successfully' });
         });
     }
+    editProduct(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { name, description, price } = req.body;
+            const { productId } = req.params;
+            const shop = yield models_1.Shop.findById(req.userId).populate('Products');
+            if (!shop)
+                throw new customError_1.CustomError('Unauthorized!', 401);
+            let imagesUrls = [];
+            const files = req.files;
+            if (files[0])
+                for (let file of files) {
+                    if (file.path)
+                        imagesUrls.push(file.path);
+                }
+            const product = yield models_1.Product.findById(productId);
+            if (!product)
+                throw new customError_1.CustomError('Product not found!', 404);
+            const products_ids = shop.Products.map((p) => p._id.toString());
+            if (!products_ids.includes(product._id.toString()))
+                throw new customError_1.CustomError('Unauthorized!', 401);
+            product.name = name || product.name;
+            product.description = description || product.description;
+            product.price = price || product.price;
+            if (imagesUrls[0])
+                product.imagesUrls = imagesUrls;
+            yield product.save();
+            res.status(201).json({ message: 'Product updated.' });
+        });
+    }
+    deleteProduct(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { productId } = req.params;
+            const shop = yield models_1.Shop.findById(req.userId).populate('Products');
+            if (!shop)
+                throw new customError_1.CustomError('Unauthorized!', 401);
+            const product = yield models_1.Product.findById(productId);
+            if (!product)
+                throw new customError_1.CustomError('Product not found!', 404);
+            const products_ids = shop.Products.map((p) => p._id.toString());
+            if (!products_ids.includes(product._id.toString()))
+                throw new customError_1.CustomError('Unauthorized!', 401);
+            const productIndex = products_ids.indexOf(product._id.toString());
+            shop.Products.splice(productIndex, 1);
+            yield product.deleteOne();
+            yield shop.save();
+            res.status(200).json({ message: 'Product deleted.' });
+        });
+    }
 };
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.get)('/products'),
+    (0, decorators_1.use)(isAuth_1.isAuth),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], shop.prototype, "getProducts", null);
 __decorate([
     catchError_1.catchError,
     (0, decorators_1.requiredProps)('name', 'description', 'price'),
@@ -55,6 +125,22 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], shop.prototype, "addProduct", null);
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.put)('/product/:productId'),
+    (0, decorators_1.use)(isAuth_1.isAuth),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], shop.prototype, "editProduct", null);
+__decorate([
+    catchError_1.catchError,
+    (0, decorators_1.del)('/product/:productId'),
+    (0, decorators_1.use)(isAuth_1.isAuth),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], shop.prototype, "deleteProduct", null);
 shop = __decorate([
     (0, decorators_1.controller)('/shop')
 ], shop);
