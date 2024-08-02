@@ -45,7 +45,7 @@ const filter = (req, file, cb) => {
         cb(error);
     }
 };
-app.use(cors_1.default);
+app.use((0, cors_1.default)());
 app.use((0, body_parser_1.urlencoded)());
 app.use((0, body_parser_1.json)());
 app.use((0, multer_1.default)({ storage: fileStorage, fileFilter: filter }).array('images', 5));
