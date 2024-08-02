@@ -54,9 +54,10 @@ app.use('/', (req, res, next) => {
 });
 app.use((err, req, res, next) => {
     console.log(err);
-    res.status(err.statusCode).json({
-        message: `An error occured: ${err.message}`,
-        data: err.data,
+    err = err[0] ? err : [err];
+    res.status(err[0].statusCode).json({
+        message: `An error occured: `,
+        data: err.map((i) => i.message),
     });
 });
 try {

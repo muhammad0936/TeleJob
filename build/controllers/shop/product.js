@@ -18,9 +18,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const decorators_1 = require("../decorators");
+const decorators_1 = require("../../decorators");
 const customError_1 = require("../../interfaces/customError");
-const catchError_1 = require("../decorators/catchError");
+const catchError_1 = require("../../decorators/catchError");
 const models_1 = require("../../models");
 const isAuth_1 = require("../../middlewares/isAuth");
 let shop = class shop {

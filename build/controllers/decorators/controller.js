@@ -28,9 +28,6 @@ function controller(routePrefix) {
             const method = Reflect.getMetadata(metadataKeys_1.MetadataKeys.method, target.prototype, key);
             const middlewares = Reflect.getMetadata(metadataKeys_1.MetadataKeys.middleware, target.prototype, key) ||
                 [];
-            const requiredBodyProps = Reflect.getMetadata(metadataKeys_1.MetadataKeys.validator, target.prototype, key) ||
-                [];
-            const validator = bodyValidators(requiredBodyProps);
             if (path) {
                 router[method](`${routePrefix}${path}`, ...middlewares, routeHandler);
             }

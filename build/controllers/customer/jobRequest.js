@@ -21,7 +21,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const decorators_1 = require("../decorators");
+const decorators_1 = require("../../decorators");
 const fs_1 = __importDefault(require("fs"));
 const customError_1 = require("../../interfaces/customError");
 const models_1 = require("../../models");

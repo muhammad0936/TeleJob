@@ -18,7 +18,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const decorators_1 = require("../decorators");
+const decorators_1 = require("../../decorators");
 const customError_1 = require("../../interfaces/customError");
 const bcrypt_1 = require("bcrypt");
 const jsonwebtoken_1 = require("jsonwebtoken");

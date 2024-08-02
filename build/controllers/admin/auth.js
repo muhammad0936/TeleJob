@@ -18,10 +18,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const decorators_1 = require("../decorators");
+const decorators_1 = require("../../decorators");
 const customError_1 = require("../../interfaces/customError");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const types_1 = require("../../util/types");
+const admin_1 = require("../../validators/admin");
 let adminController = class adminController {
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,8 +40,9 @@ let adminController = class adminController {
 };
 __decorate([
     decorators_1.catchError,
-    (0, decorators_1.requiredProps)('email'),
+    (0, decorators_1.requiredProps)('email', 'password'),
     (0, decorators_1.post)('/login'),
+    (0, decorators_1.validate)(admin_1.loginValidator),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
