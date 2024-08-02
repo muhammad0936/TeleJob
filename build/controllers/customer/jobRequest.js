@@ -41,8 +41,8 @@ let customer = class customer {
             }
             let imagesUrls = [];
             const files = req.files;
-//            if (!files[0])
-//                throw new customError_1.CustomError('Provide one image at least!', 400);
+            if (!files[0])
+                throw new customError_1.CustomError('Provide one image at least!', 400);
             for (let file of files) {
                 if (file.path)
                     imagesUrls.push(file.path);

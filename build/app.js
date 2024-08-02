@@ -18,6 +18,7 @@ const mongoose_1 = require("mongoose");
 const app = (0, express_1.default)();
 const dotenv_1 = require("dotenv");
 const path_1 = __importDefault(require("path"));
+const cors_1 = __importDefault(require("cors"));
 (0, dotenv_1.config)();
 const fileStorage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
@@ -44,6 +45,7 @@ const filter = (req, file, cb) => {
         cb(error);
     }
 };
+app.use(cors_1.default);
 app.use((0, body_parser_1.urlencoded)());
 app.use((0, body_parser_1.json)());
 app.use((0, multer_1.default)({ storage: fileStorage, fileFilter: filter }).array('images', 5));
