@@ -55,11 +55,12 @@ app.use('/', (req, res, next) => {
     res.status(404).send('Page not found!');
 });
 app.use((err, req, res, next) => {
-    console.log(err);
     err = err[0] ? err : [err];
-    res.status(err[0].statusCode).json({
+    console.log('err');
+    console.log(err);
+    res.status(err[0].statusCode || 500).json({
         message: `An error occured: `,
-        data: err.map((i) => i.message),
+        data: err.map((i) => i.message || i),
     });
 });
 try {

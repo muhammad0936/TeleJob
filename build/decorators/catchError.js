@@ -33,7 +33,7 @@ function catchError(target, key, desc) {
                     });
                 }
                 if (!err.statusCode)
-                    err.statusCode = err[0].statusCode || 500;
+                    err.statusCode = err[0] ? err[0].statusCode || 500 : 500;
                 next(err);
             }
         });
