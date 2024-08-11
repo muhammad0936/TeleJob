@@ -19,7 +19,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorators_1 = require("../../decorators");
-const isAuth_1 = require("../../middlewares/isAuth");
 const models_1 = require("../../models");
 let jobCategory = class jobCategory {
     getJobCategories(req, res) {
@@ -37,8 +36,9 @@ let jobCategory = class jobCategory {
 };
 __decorate([
     decorators_1.catchError,
-    (0, decorators_1.get)('/jobCategories'),
-    (0, decorators_1.use)(isAuth_1.isAuth),
+    (0, decorators_1.get)('/jobCategories')
+    // @use(isAuth)
+    ,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)

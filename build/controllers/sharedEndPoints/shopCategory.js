@@ -19,7 +19,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorators_1 = require("../../decorators");
-const isAuth_1 = require("../../middlewares/isAuth");
 const models_1 = require("../../models");
 let shopCategory = class shopCategory {
     getShopCategories(req, res) {
@@ -36,8 +35,9 @@ let shopCategory = class shopCategory {
 };
 __decorate([
     decorators_1.catchError,
-    (0, decorators_1.get)('/shopCategories'),
-    (0, decorators_1.use)(isAuth_1.isAuth),
+    (0, decorators_1.get)('/shopCategories')
+    // @use(isAuth)
+    ,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
