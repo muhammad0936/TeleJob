@@ -24,7 +24,12 @@ const models_1 = require("../../models");
 let worker = class worker {
     getShops(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const shops = yield models_1.Shop.find().select('_id name phone description address photoUrl');
+            const { shopCategoryId } = req.query;
+            let shops = [];
+            if (shopCategoryId)
+                shops = yield models_1.Shop.find({ ShopCategories: shopCategoryId }).select('_id name phone description address photoUrl');
+            else
+                shops = yield models_1.Shop.find().select('_id name phone description address photoUrl');
             res.status(200).json({ message: 'Shops: ', shops });
         });
     }

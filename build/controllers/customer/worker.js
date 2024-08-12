@@ -24,7 +24,12 @@ const models_1 = require("../../models");
 let customer = class customer {
     getWorkers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const workers = yield models_1.Worker.find().select('_id name description address');
+            const { jobCategoryId } = req.query;
+            let workers = [];
+            if (jobCategoryId)
+                workers = yield models_1.Worker.find({ JobCategories: jobCategoryId }).select('_id name description address');
+            else
+                workers = yield models_1.Worker.find().select('_id name description address');
             res.status(200).json({ message: 'Workers: ', workers });
         });
     }
